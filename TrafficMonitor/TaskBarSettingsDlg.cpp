@@ -125,6 +125,7 @@ void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_digit_number_combo.SetMouseWheelEnable(enable);
     m_font_size_edit.SetMouseWheelEnable(enable);
     m_memory_display_combo.SetMouseWheelEnable(enable);
+    m_gpu_memory_display_combo.SetMouseWheelEnable(enable);
     m_item_space_edit.SetMouseWheelEnable(enable);
     m_vertical_margin_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_edit.SetMouseWheelEnable(enable);
@@ -162,6 +163,10 @@ bool CTaskBarSettingsDlg::InitializeControls()
     RepositionTextBasedControls({
         { CtrlTextInfo::L1, TXT_MEMORY_DISPLAY_MODE },
         { CtrlTextInfo::C0, IDC_MEMORY_DISPLAY_COMBO }
+    });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, TXT_GPU_MEMORY_DISPLAY_MODE },
+        { CtrlTextInfo::C0, IDC_GPU_MEMORY_DISPLAY_COMBO }
     });
     RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_ITEM_SPACING_STATIC },
@@ -220,6 +225,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, m_atuo_adapt_light_theme_chk);
     DDX_Control(pDX, IDC_AUTO_SET_BACK_COLOR_CHECK, m_auto_set_back_color_chk);
     DDX_Control(pDX, IDC_MEMORY_DISPLAY_COMBO, m_memory_display_combo);
+    DDX_Control(pDX, IDC_GPU_MEMORY_DISPLAY_COMBO, m_gpu_memory_display_combo);
     DDX_Control(pDX, IDC_ITEM_SPACE_EDIT, m_item_space_edit);
     DDX_Control(pDX, IDC_VERTICAL_MARGIN_EDIT, m_vertical_margin_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_net_speed_figure_max_val_edit);
@@ -256,6 +262,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_AUTO_SET_BACK_COLOR_CHECK, &CTaskBarSettingsDlg::OnBnClickedAutoSetBackColorCheck)
     ON_BN_CLICKED(IDC_DISPLAY_TEXT_SETTING_BUTTON, &CTaskBarSettingsDlg::OnBnClickedDisplayTextSettingButton)
     ON_CBN_SELCHANGE(IDC_MEMORY_DISPLAY_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo)
+    ON_CBN_SELCHANGE(IDC_GPU_MEMORY_DISPLAY_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeGpuMemoryDisplayCombo)
     ON_BN_CLICKED(IDC_SHOW_DASHED_BOX, &CTaskBarSettingsDlg::OnBnClickedShowDashedBox)
     ON_BN_CLICKED(IDC_SET_ORDER_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetOrderButton)
     ON_EN_CHANGE(IDC_ITEM_SPACE_EDIT, &CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit)
@@ -398,6 +405,12 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_USED));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_AVAILABLE));
     m_memory_display_combo.SetCurSel(static_cast<int>(m_data.memory_display));
+
+    //初始化显存显示方式下拉列表
+    m_gpu_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
+    m_gpu_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_USED));
+    m_gpu_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_AVAILABLE));
+    m_gpu_memory_display_combo.SetCurSel(static_cast<int>(m_data.gpu_memory_display));
 
     CheckDlgButton(IDC_SHOW_NET_SPEED_FIGURE_CHECK, m_data.show_netspeed_figure);
     m_net_speed_figure_max_val_edit.SetRange(1, 1024);
@@ -836,6 +849,12 @@ void CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.memory_display = static_cast<MemoryDisplay>(m_memory_display_combo.GetCurSel());
+}
+
+void CTaskBarSettingsDlg::OnCbnSelchangeGpuMemoryDisplayCombo()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.gpu_memory_display = static_cast<MemoryDisplay>(m_gpu_memory_display_combo.GetCurSel());
 }
 
 

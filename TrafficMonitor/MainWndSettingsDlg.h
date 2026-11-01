@@ -36,6 +36,7 @@ protected:
     CSpinEdit m_font_size_edit;
     CComboBox2 m_double_click_combo;
     CComboBox2 m_memory_display_combo;
+    CComboBox2 m_gpu_memory_display_combo;
 
 protected:
     void DrawStaticColor();
@@ -75,6 +76,7 @@ public:
     afx_msg void OnBnClickedBrowseButton();
     afx_msg void OnBnClickedDisplayTextSettingButton();
     afx_msg void OnCbnSelchangeMemoryDisplayCombo();
+    afx_msg void OnCbnSelchangeGpuMemoryDisplayCombo();
     afx_msg void OnBnClickedAlwaysOnTopCheck();
     afx_msg void OnBnClickedMousePenetrateCheck();
     afx_msg void OnBnClickedLockWindowPosCheck();

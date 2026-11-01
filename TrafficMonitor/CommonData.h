@@ -232,6 +232,7 @@ struct PublicSettingData
     bool separate_value_unit_with_space{ true };    //网速数值和单位用空格分隔
     bool show_tool_tip{ true };         //显示鼠标提示
     MemoryDisplay memory_display{ MemoryDisplay::USAGE_PERCENTAGE };    //内存显示方式
+    MemoryDisplay gpu_memory_display{ MemoryDisplay::USAGE_PERCENTAGE };    //显存显示方式
 
     bool unit_byte{ true };             //使用字节(B)而不是比特(b)为单位
     SpeedUnit speed_unit;       //网速的单位

@@ -16,7 +16,8 @@ enum DisplayItem
     TDI_HDD_USAGE,
     TDI_TOTAL_SPEED,
     TDI_CPU_FREQ,
-    TDI_TODAY_TRAFFIC
+    TDI_TODAY_TRAFFIC,
+    TDI_GPU_MEMORY          //显存占用（添加在最后，避免改变已有项目的序号，影响已保存的设置）
 };
 
 //所有内置显示项目的集合
@@ -26,7 +27,7 @@ const std::set<DisplayItem> AllDisplayItems
 #ifndef WITHOUT_TEMPERATURE
     , TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP
 #endif
-    , TDI_HDD_USAGE, TDI_CPU_FREQ, TDI_TOTAL_SPEED, TDI_TODAY_TRAFFIC
+    , TDI_HDD_USAGE, TDI_CPU_FREQ, TDI_TOTAL_SPEED, TDI_TODAY_TRAFFIC, TDI_GPU_MEMORY
 };
 
 //显示的项目

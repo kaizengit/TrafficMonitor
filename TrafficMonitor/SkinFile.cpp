@@ -748,6 +748,9 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
     case TDI_CPU_FREQ:
         return "cpu_freq";
         break;
+    case TDI_GPU_MEMORY:
+        return "gpu_memory";
+        break;
     default:
         return string();
         break;

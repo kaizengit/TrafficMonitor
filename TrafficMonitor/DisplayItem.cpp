@@ -79,6 +79,7 @@ CString CommonDisplayItem::GetItemName() const
         case TDI_HDD_USAGE: return CCommon::LoadText(IDS_HDD_USAGE);
         case TDI_CPU_FREQ: return CCommon::LoadText(IDS_CPU_FREQ);
         case TDI_TODAY_TRAFFIC: return CCommon::LoadText(IDS_TRAFFIC_USED);
+        case TDI_GPU_MEMORY: return CCommon::LoadText(IDS_GPU_MEMORY_USAGE);
         default:
             ASSERT(false);
             break;
@@ -132,6 +133,9 @@ std::wstring CommonDisplayItem::DefaultString(bool is_main_window) const
         case TDI_GPU_USAGE:
             default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
             break;
+        case TDI_GPU_MEMORY:
+            default_text = CCommon::LoadText(IDS_GPU_MEMORY_DISP, _T(": "));
+            break;
         case TDI_GPU_TEMP:
             default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
             break;
@@ -176,6 +180,7 @@ const wchar_t* CommonDisplayItem::GetItemIniKeyName() const
         case TDI_TOTAL_SPEED: return L"total_speed_string";
         case TDI_CPU_FREQ: return L"cpu_freq_string";
         case TDI_TODAY_TRAFFIC: return L"today_traffic_string";
+        case TDI_GPU_MEMORY: return L"gpu_memory_string";
         }
         ASSERT(FALSE);
         return L"";
@@ -268,6 +273,17 @@ CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
         case TDI_TODAY_TRAFFIC:
             str_value = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
             break;
+        //显存占用
+        case TDI_GPU_MEMORY:
+            if (theApp.m_gpu_memory_usage < 0)      //没有获取到显存信息时不显示数值
+                break;
+            if (cfg_data->gpu_memory_display == MemoryDisplay::MEMORY_USED)
+                str_value = CCommon::DataSizeToString(theApp.m_gpu_memory_used, cfg_data->separate_value_unit_with_space);
+            else if (cfg_data->gpu_memory_display == MemoryDisplay::MEMORY_AVAILABLE)
+                str_value = CCommon::DataSizeToString(theApp.m_gpu_memory_total - theApp.m_gpu_memory_used, cfg_data->separate_value_unit_with_space);
+            else
+                str_value = CCommon::UsageToString(theApp.m_gpu_memory_usage, *cfg_data);
+            break;
         default:
             break;
         }
@@ -310,6 +326,12 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
             break;
         case TDI_CPU_FREQ:
             sample_str = _T("1.0 GHz");
+            break;
+        case TDI_GPU_MEMORY:
+            if (theApp.m_main_wnd_data.gpu_memory_display == MemoryDisplay::USAGE_PERCENTAGE)
+                sample_str = _T("50 %");
+            else
+                sample_str = _T("8.0 GB");
             break;
         default:
             sample_str = _T("99");
@@ -403,6 +425,29 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
                 sample_str = _T("999.99 MB");
             else
                 sample_str = _T("999.99MB");
+        }
+            break;
+        //显存占用
+        case TDI_GPU_MEMORY:
+        {
+            if (theApp.m_taskbar_data.gpu_memory_display == MemoryDisplay::MEMORY_USED
+                || theApp.m_taskbar_data.gpu_memory_display == MemoryDisplay::MEMORY_AVAILABLE)
+            {
+                //显示显存大小时，宽度按显存总量计算（没有获取到总量时按8GB估算）
+                unsigned __int64 total_memory{ theApp.m_gpu_memory_total > 0 ? theApp.m_gpu_memory_total : 8ull * 1024 * 1024 * 1024 };
+                sample_str = CCommon::DataSizeToString(total_memory, theApp.m_taskbar_data.separate_value_unit_with_space);
+            }
+            else
+            {
+                sample_str = _T("100");
+                if (!theApp.m_taskbar_data.hide_percent)
+                {
+                    if (theApp.m_taskbar_data.separate_value_unit_with_space)
+                        sample_str += _T(" %");
+                    else
+                        sample_str += _T("%");
+                }
+            }
         }
             break;
         }

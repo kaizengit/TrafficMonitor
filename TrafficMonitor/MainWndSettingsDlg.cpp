@@ -31,6 +31,7 @@ void CMainWndSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_double_click_combo.SetMouseWheelEnable(enable);
     m_font_size_edit.SetMouseWheelEnable(enable);
     m_memory_display_combo.SetMouseWheelEnable(enable);
+    m_gpu_memory_display_combo.SetMouseWheelEnable(enable);
 }
 
 bool CMainWndSettingsDlg::InitializeControls()
@@ -56,6 +57,11 @@ bool CMainWndSettingsDlg::InitializeControls()
     RepositionTextBasedControls({
         { CtrlTextInfo::L1, IDC_MEMORY_DISPLAY_MODE_STATIC },
         { CtrlTextInfo::C0, IDC_MEMORY_DISPLAY_COMBO }
+    });
+
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, IDC_GPU_MEMORY_DISPLAY_MODE_STATIC },
+        { CtrlTextInfo::C0, IDC_GPU_MEMORY_DISPLAY_COMBO }
     });
 
     RepositionTextBasedControls({
@@ -135,6 +141,7 @@ void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_FONT_SIZE_EDIT, m_font_size_edit);
     DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
     DDX_Control(pDX, IDC_MEMORY_DISPLAY_COMBO, m_memory_display_combo);
+    DDX_Control(pDX, IDC_GPU_MEMORY_DISPLAY_COMBO, m_gpu_memory_display_combo);
 }
 
 
@@ -162,6 +169,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_BROWSE_BUTTON, &CMainWndSettingsDlg::OnBnClickedBrowseButton)
     ON_BN_CLICKED(IDC_DISPLAY_TEXT_SETTING_BUTTON, &CMainWndSettingsDlg::OnBnClickedDisplayTextSettingButton)
     ON_CBN_SELCHANGE(IDC_MEMORY_DISPLAY_COMBO, &CMainWndSettingsDlg::OnCbnSelchangeMemoryDisplayCombo)
+    ON_CBN_SELCHANGE(IDC_GPU_MEMORY_DISPLAY_COMBO, &CMainWndSettingsDlg::OnCbnSelchangeGpuMemoryDisplayCombo)
     ON_BN_CLICKED(IDC_ALWAYS_ON_TOP_CHECK, &CMainWndSettingsDlg::OnBnClickedAlwaysOnTopCheck)
     ON_BN_CLICKED(IDC_MOUSE_PENETRATE_CHECK, &CMainWndSettingsDlg::OnBnClickedMousePenetrateCheck)
     ON_BN_CLICKED(IDC_LOCK_WINDOW_POS_CHECK, &CMainWndSettingsDlg::OnBnClickedLockWindowPosCheck)
@@ -255,6 +263,12 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_USED));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_AVAILABLE));
     m_memory_display_combo.SetCurSel(static_cast<int>(m_data.memory_display));
+
+    //初始化显存显示方式下拉列表
+    m_gpu_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
+    m_gpu_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_USED));
+    m_gpu_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_AVAILABLE));
+    m_gpu_memory_display_combo.SetCurSel(static_cast<int>(m_data.gpu_memory_display));
 
     CheckDlgButton(IDC_ALWAYS_ON_TOP_CHECK, m_data.m_always_on_top);
     CheckDlgButton(IDC_MOUSE_PENETRATE_CHECK, m_data.m_mouse_penetrate);
@@ -559,6 +573,12 @@ void CMainWndSettingsDlg::OnCbnSelchangeMemoryDisplayCombo()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.memory_display = static_cast<MemoryDisplay>(m_memory_display_combo.GetCurSel());
+}
+
+void CMainWndSettingsDlg::OnCbnSelchangeGpuMemoryDisplayCombo()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.gpu_memory_display = static_cast<MemoryDisplay>(m_gpu_memory_display_combo.GetCurSel());
 }
 
 

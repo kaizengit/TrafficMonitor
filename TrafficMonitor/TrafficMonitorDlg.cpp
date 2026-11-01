@@ -182,6 +182,14 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
         temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
         tip_info += temp;
     }
+    if (!skin_layout.GetItem(TDI_GPU_MEMORY).show && theApp.m_gpu_memory_usage >= 0)
+    {
+        temp.Format(_T("\r\n%s: %s/%s (%d %%)"), CCommon::LoadText(IDS_GPU_MEMORY_USAGE),
+            CCommon::DataSizeToString(theApp.m_gpu_memory_used),
+            CCommon::DataSizeToString(theApp.m_gpu_memory_total),
+            theApp.m_gpu_memory_usage);
+        tip_info += temp;
+    }
 #ifndef WITHOUT_TEMPERATURE
     if (IsTemperatureNeeded())
     {
@@ -658,6 +666,8 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
     strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>/s"), { CCommon::LoadText(IDS_DOWNLOAD), in_speed });
     strTip += CCommon::StringFormat(_T("\r\nCPU: <%1%> %"), { theApp.m_cpu_usage });
     strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_MEMORY), theApp.m_memory_usage });
+    if (theApp.m_gpu_memory_usage >= 0)
+        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_GPU_MEMORY_USAGE), theApp.m_gpu_memory_usage });
     if (IsTemperatureNeeded())
     {
         if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && theApp.m_gpu_usage >= 0)
@@ -1417,6 +1427,27 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
     theApp.m_total_memory = static_cast<int>(statex.ullTotalPhys / 1024);
 
+    //获取显存占用
+    {
+        unsigned __int64 used_bytes{}, total_bytes{};
+        if (m_gpu_memory_helper.GetGpuMemory(used_bytes, total_bytes))
+        {
+            theApp.m_gpu_memory_used = used_bytes;
+            theApp.m_gpu_memory_total = total_bytes;
+            int usage = static_cast<int>(used_bytes * 100 / total_bytes);
+            if (usage < 0)      //限制在0-100范围
+                usage = 0;
+            if (usage > 100)
+                usage = 100;
+            theApp.m_gpu_memory_usage = usage;
+        }
+        else
+        {
+            theApp.m_gpu_memory_usage = -1;
+            theApp.m_gpu_memory_used = 0;
+            theApp.m_gpu_memory_total = 0;
+        }
+    }
 #ifndef WITHOUT_TEMPERATURE
     //获取温度
     if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)

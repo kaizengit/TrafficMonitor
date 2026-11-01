@@ -49,6 +49,7 @@ protected:
     CButton m_atuo_adapt_light_theme_chk;
     CButton m_auto_set_back_color_chk;
     CComboBox2 m_memory_display_combo;
+    CComboBox2 m_gpu_memory_display_combo;
     CSpinEdit m_item_space_edit;
     CSpinEdit m_vertical_margin_edit;
     CSpinEdit m_net_speed_figure_max_val_edit;
@@ -107,6 +108,7 @@ public:
     afx_msg void OnBnClickedAutoSetBackColorCheck();
     afx_msg void OnBnClickedDisplayTextSettingButton();
     afx_msg void OnCbnSelchangeMemoryDisplayCombo();
+    afx_msg void OnCbnSelchangeGpuMemoryDisplayCombo();
     afx_msg void OnBnClickedShowDashedBox();
     afx_msg void OnBnClickedSetOrderButton();
     afx_msg void OnEnChangeItemSpaceEdit();

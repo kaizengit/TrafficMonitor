@@ -142,6 +142,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
     m_main_wnd_data.show_tool_tip = ini.GetBool(_T("config"), _T("show_tool_tip"), true);
     m_main_wnd_data.memory_display = static_cast<MemoryDisplay>(ini.GetInt(L"config", L"memory_display", static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE)));
+    m_main_wnd_data.gpu_memory_display = static_cast<MemoryDisplay>(ini.GetInt(L"config", L"gpu_memory_display", static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE)));
     m_main_wnd_data.unit_byte = ini.GetBool(_T("config"), _T("unit_byte"), true);
     m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("config"), _T("speed_unit"), 0));
     m_main_wnd_data.hide_unit = ini.GetBool(_T("config"), _T("hide_unit"), false);
@@ -235,6 +236,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.show_tool_tip = ini.GetBool(_T("task_bar"), _T("show_tool_tip"), true);
     m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
     m_taskbar_data.memory_display = static_cast<MemoryDisplay>(ini.GetInt(L"task_bar", L"memory_display", static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE)));
+    m_taskbar_data.gpu_memory_display = static_cast<MemoryDisplay>(ini.GetInt(L"task_bar", L"gpu_memory_display", static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE)));
     m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
     m_taskbar_data.double_click_exe = ini.GetString(L"task_bar", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
     m_taskbar_data.cm_graph_type = ini.GetBool(_T("task_bar"), _T("cm_graph_type"), true);
@@ -350,6 +352,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
     ini.WriteBool(L"config", L"show_tool_tip", m_main_wnd_data.show_tool_tip);
     ini.WriteInt(L"config", L"memory_display", static_cast<int>(m_main_wnd_data.memory_display));
+    ini.WriteInt(L"config", L"gpu_memory_display", static_cast<int>(m_main_wnd_data.gpu_memory_display));
     ini.WriteBool(L"config", L"unit_byte", m_main_wnd_data.unit_byte);
     ini.WriteInt(L"config", L"speed_unit", static_cast<int>(m_main_wnd_data.speed_unit));
     ini.WriteBool(L"config", L"hide_unit", m_main_wnd_data.hide_unit);
@@ -403,6 +406,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"task_bar", L"show_tool_tip", m_taskbar_data.show_tool_tip);
     ini.WriteInt(L"task_bar", L"digits_number", m_taskbar_data.digits_number);
     ini.WriteInt(L"task_bar", L"memory_display", static_cast<int>(m_taskbar_data.memory_display));
+    ini.WriteInt(L"task_bar", L"gpu_memory_display", static_cast<int>(m_taskbar_data.gpu_memory_display));
     ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(m_taskbar_data.double_click_action));
     ini.WriteString(L"task_bar", L"double_click_exe", m_taskbar_data.double_click_exe);
     ini.WriteBool(L"task_bar", L"cm_graph_type", m_taskbar_data.cm_graph_type);
