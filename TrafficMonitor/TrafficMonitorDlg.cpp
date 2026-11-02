@@ -182,12 +182,14 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
         temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
         tip_info += temp;
     }
-    if (!skin_layout.GetItem(TDI_GPU_MEMORY).show && theApp.m_gpu_memory_usage >= 0)
+    //显存占用：鼠标提示中同时给出实际占用和百分比（无论主窗口中是否已显示该指标）
+    if (theApp.m_gpu_memory_usage >= 0 && theApp.m_gpu_memory_total > 0)
     {
-        temp.Format(_T("\r\n%s: %s/%s (%d %%)"), CCommon::LoadText(IDS_GPU_MEMORY_USAGE),
+        double gpu_memory_percent = static_cast<double>(theApp.m_gpu_memory_used) * 100.0 / static_cast<double>(theApp.m_gpu_memory_total);
+        temp.Format(_T("\r\n%s: %s/%s (%.1f %%)"), CCommon::LoadText(IDS_GPU_MEMORY_USAGE),
             CCommon::DataSizeToString(theApp.m_gpu_memory_used),
             CCommon::DataSizeToString(theApp.m_gpu_memory_total),
-            theApp.m_gpu_memory_usage);
+            gpu_memory_percent);
         tip_info += temp;
     }
 #ifndef WITHOUT_TEMPERATURE
@@ -667,7 +669,10 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
     strTip += CCommon::StringFormat(_T("\r\nCPU: <%1%> %"), { theApp.m_cpu_usage });
     strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_MEMORY), theApp.m_memory_usage });
     if (theApp.m_gpu_memory_usage >= 0)
-        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_GPU_MEMORY_USAGE), theApp.m_gpu_memory_usage });
+    {
+        CString gpu_memory_detail = CCommon::StringFormat(_T("<%1%>/<%2%>"), { CCommon::DataSizeToString(theApp.m_gpu_memory_used), CCommon::DataSizeToString(theApp.m_gpu_memory_total) });
+        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> % (<%3%>)"), { CCommon::LoadText(IDS_GPU_MEMORY_USAGE), theApp.m_gpu_memory_usage, gpu_memory_detail });
+    }
     if (IsTemperatureNeeded())
     {
         if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && theApp.m_gpu_usage >= 0)

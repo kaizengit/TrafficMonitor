@@ -756,12 +756,14 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
         tip_info += temp;
     }
-    if (!IsItemShow(TDI_GPU_MEMORY) && theApp.m_gpu_memory_usage >= 0)
+    //显存占用：鼠标提示中同时给出实际占用和百分比（无论任务栏窗口是否已显示该指标）
+    if (theApp.m_gpu_memory_usage >= 0 && theApp.m_gpu_memory_total > 0)
     {
-        temp.Format(_T("\r\n%s: %s/%s (%d %%)"), CCommon::LoadText(IDS_GPU_MEMORY_USAGE),
+        double gpu_memory_percent = static_cast<double>(theApp.m_gpu_memory_used) * 100.0 / static_cast<double>(theApp.m_gpu_memory_total);
+        temp.Format(_T("\r\n%s: %s/%s (%.1f %%)"), CCommon::LoadText(IDS_GPU_MEMORY_USAGE),
             CCommon::DataSizeToString(theApp.m_gpu_memory_used),
             CCommon::DataSizeToString(theApp.m_gpu_memory_total),
-            theApp.m_gpu_memory_usage);
+            gpu_memory_percent);
         tip_info += temp;
     }
 
