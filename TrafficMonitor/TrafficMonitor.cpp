@@ -1306,7 +1306,32 @@ void CTrafficMonitorApp::CheckWindows11Taskbar()
     if (m_win_version.IsWindows11OrLater())
     {
         HWND hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);
-        m_is_windows11_taskbar = (::FindWindowExW(hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
+        m_is_windows11_taskbar = (hTaskbar != NULL && ::FindWindowExW(hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
+        // Windows 11 24H2及以后的版本中，任务栏里已经不再有DesktopWindowContentBridge这个子窗口，
+        // 但任务栏仍然是Windows 11的样式：任务列表窗口不会横跨到通知区域，只占应用程序图标所需的宽度。
+        // 而Windows 10（以及使用经典任务栏的程序）的任务列表窗口总是横跨到通知区域的。
+        // 因此用任务列表窗口的右边缘和通知区域之间的距离来区分这两种情况。
+        if (!m_is_windows11_taskbar && hTaskbar != NULL)
+        {
+            HWND hBar = ::FindWindowExW(hTaskbar, 0, L"ReBarWindow32", NULL);
+            HWND hNotify = ::FindWindowExW(hTaskbar, 0, L"TrayNotifyWnd", NULL);
+            HWND hTaskList = NULL;
+            if (hBar != NULL)
+            {
+                hTaskList = ::FindWindowExW(hBar, 0, L"MSTaskSwWClass", NULL);
+                if (hTaskList == NULL)
+                    hTaskList = ::FindWindowExW(hBar, 0, L"MSTaskListWClass", NULL);
+            }
+            if (hBar != NULL && hNotify != NULL && hTaskList != NULL)
+            {
+                CRect rect_bar, rect_notify, rect_task_list;
+                ::GetWindowRect(hBar, rect_bar);
+                ::GetWindowRect(hNotify, rect_notify);
+                ::GetWindowRect(hTaskList, rect_task_list);
+                //任务列表窗口右侧有大片空白（超过任务栏宽度的1/10）时，认为是Windows 11的任务栏
+                m_is_windows11_taskbar = (rect_notify.left - rect_task_list.right > rect_bar.Width() / 10);
+            }
+        }
     }
     else
     {
